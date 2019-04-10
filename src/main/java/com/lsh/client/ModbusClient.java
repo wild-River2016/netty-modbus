@@ -27,6 +27,7 @@ import static com.lsh.constant.ModbusConstants.DEFAULT_UNIT_IDENTIFIER;
  * @Version
  */
 public class ModbusClient {
+    
 
     private final String host;
     private final int port;
