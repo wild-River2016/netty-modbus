@@ -33,6 +33,10 @@ public abstract class ModbusFunction {
         this.functionCode = functionCode;
     }
 
+    public short getFunctionCode() {
+        return functionCode;
+    }
+
     public static boolean isError(short functionCode) {
         return functionCode - ModbusConstants.ERROR_OFFSET >= 0;
     }

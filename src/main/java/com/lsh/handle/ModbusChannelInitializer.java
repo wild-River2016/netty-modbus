@@ -1,6 +1,7 @@
 package com.lsh.handle;
 
 import com.lsh.constant.ModbusConstants;
+import com.serotonin.modbus4j.Modbus;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -41,7 +42,10 @@ public class ModbusChannelInitializer extends ChannelInitializer<SocketChannel> 
         ChannelPipeline pipeline = ch.pipeline();
         //数据包的最大长度、长度域的偏移量、长度域的长度
         pipeline.addLast("framer", new LengthFieldBasedFrameDecoder(ModbusConstants.ADU_MAX_LENGTH, 4, 2));
+        //编码
+        pipeline.addLast("encoder", new ModbusEncoder());
 
+        pipeline.addLast("responseHandler", handler);
 
     }
 }

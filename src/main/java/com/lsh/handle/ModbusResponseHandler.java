@@ -2,7 +2,9 @@ package com.lsh.handle;
 
 import com.lsh.constant.ModbusConstants;
 import com.lsh.entity.ModbusFrame;
+import com.lsh.entity.exception.ErrorResponseException;
 import com.lsh.entity.exception.NoResponseException;
+import com.lsh.entity.func.ModbusError;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -28,7 +30,7 @@ public abstract class ModbusResponseHandler extends SimpleChannelInboundHandler<
      */
     private final Map<Integer, ModbusFrame> responses = new HashMap<>(ModbusConstants.TRANSACTION_IDENTIFIER_MAX);
     
-    public ModbusFrame getResponse(int transactionIdentifier) throws NoResponseException {
+    public ModbusFrame getResponse(int transactionIdentifier) throws NoResponseException, ErrorResponseException {
         //增加2s的超时时间
         long timeoutTime = System.currentTimeMillis() + ModbusConstants.SYNC_RESPONSE_TIMEOUT;
         ModbusFrame frame;
@@ -42,8 +44,9 @@ public abstract class ModbusResponseHandler extends SimpleChannelInboundHandler<
 
         if (frame == null) {
             throw new NoResponseException();
-        } else if (true) {
-            //返回错误功能码
+        } else if (frame.getFunction() instanceof ModbusError) {
+            //返回异常码
+            throw new ErrorResponseException((ModbusError) frame.getFunction());
         }
 
         return frame;
@@ -58,6 +61,7 @@ public abstract class ModbusResponseHandler extends SimpleChannelInboundHandler<
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ModbusFrame msg) throws Exception {
         responses.put(msg.getHeader().getTransactionIdentifier(), msg);
+        newResponse(msg);
     }
 
     public abstract void newResponse(ModbusFrame frame);

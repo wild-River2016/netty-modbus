@@ -1,6 +1,9 @@
 package com.lsh.client;
 
 import com.lsh.constant.ModbusConstants;
+import com.lsh.entity.exception.ConnectionException;
+import com.lsh.handle.ModbusChannelInitializer;
+import com.lsh.handle.ModbusResponseHandler;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -27,12 +30,20 @@ import static com.lsh.constant.ModbusConstants.DEFAULT_UNIT_IDENTIFIER;
  * @Version
  */
 public class ModbusClient {
+    /**
+     * 连接状态枚举类
+     */
+    public static enum CONNECTION_STATES {
+        connected, notConnected, pending
+    }
     
 
     private final String host;
     private final int port;
     private short unitIdentifier;
     private short protocolIdentifier;
+    private Bootstrap bootstrap;
+    private Channel channel;
 
 
     public ModbusClient(String host, int port) {
@@ -48,6 +59,35 @@ public class ModbusClient {
         this.port = port;
         this.unitIdentifier = unitIdentifier;
         this.protocolIdentifier = protocolIdentifier;
+    }
+
+    public void setup(ModbusResponseHandler handler) throws ConnectionException {
+       final NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        bootstrap = new Bootstrap();
+        bootstrap.group(workerGroup)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new ModbusChannelInitializer(handler));
+
+        try {
+            ChannelFuture f = bootstrap.connect(host, port).sync();
+            channel = f.channel();
+            channel.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    workerGroup.shutdownGracefully();
+                }
+            });
+        } catch (InterruptedException e) {
+            throw new ConnectionException(e.getLocalizedMessage());
+        }
+    }
+
+    public void close() {
+        if (channel != null) {
+            channel.close().awaitUninterruptibly();
+        }
     }
 
 
