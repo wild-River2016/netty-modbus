@@ -58,17 +58,17 @@
             <version>${junit.version}</version>
         </dependency>
         <!--modbus4j-->
-        <dependency>
-            <groupId>com.infiniteautomation</groupId>
-            <artifactId>modbus4j</artifactId>
-            <version>3.0.5-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.infiniteautomation</groupId>-->
+<!--            <artifactId>modbus4j</artifactId>-->
+<!--            <version>3.0.5-SNAPSHOT</version>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>com.mobus.timer</groupId>
-            <artifactId>serotonin-timer</artifactId>
-            <version>2.0.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.mobus.timer</groupId>-->
+<!--            <artifactId>serotonin-timer</artifactId>-->
+<!--            <version>2.0.6</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.mobus.utils</groupId>
             <artifactId>serotonin-utils</artifactId>
