@@ -1,7 +1,7 @@
 package com.lsh.handle;
 
 import com.lsh.constant.ModbusConstants;
-import com.serotonin.modbus4j.Modbus;
+import com.lsh.entity.ModbusFrame;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -44,8 +44,14 @@ public class ModbusChannelInitializer extends ChannelInitializer<SocketChannel> 
         pipeline.addLast("framer", new LengthFieldBasedFrameDecoder(ModbusConstants.ADU_MAX_LENGTH, 4, 2));
         //编码
         pipeline.addLast("encoder", new ModbusEncoder());
-
-        pipeline.addLast("responseHandler", handler);
+        pipeline.addLast("decoder", new ModbusDecoder(false));
+//        pipeline.addLast("decoder", new ModbusDecoder(handler instanceof ModbusRequestHandler));
+        pipeline.addLast("responseHandler", new ModbusResponseHandler() {
+            @Override
+            public void newResponse(ModbusFrame frame) {
+                System.out.println("11111111111111");
+            }
+        });
 
     }
 }

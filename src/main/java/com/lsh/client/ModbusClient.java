@@ -1,15 +1,18 @@
 package com.lsh.client;
 
 import com.lsh.constant.ModbusConstants;
+import com.lsh.entity.ModbusFrame;
+import com.lsh.entity.ModbusFunction;
+import com.lsh.entity.ModbusHeader;
 import com.lsh.entity.exception.ConnectionException;
+import com.lsh.entity.exception.ErrorResponseException;
+import com.lsh.entity.exception.NoResponseException;
+import com.lsh.entity.request.ReadHoldingRegistersRequest;
+import com.lsh.entity.response.ReadHoldingRegistersResponse;
 import com.lsh.handle.ModbusChannelInitializer;
 import com.lsh.handle.ModbusResponseHandler;
-import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -40,6 +43,7 @@ public class ModbusClient {
 
     private final String host;
     private final int port;
+    private int lastTransactionIdentifier = 0;
     private short unitIdentifier;
     private short protocolIdentifier;
     private Bootstrap bootstrap;
@@ -59,6 +63,10 @@ public class ModbusClient {
         this.port = port;
         this.unitIdentifier = unitIdentifier;
         this.protocolIdentifier = protocolIdentifier;
+    }
+
+    public void setup() throws ConnectionException {
+        setup(null);
     }
 
     public void setup(ModbusResponseHandler handler) throws ConnectionException {
@@ -89,6 +97,55 @@ public class ModbusClient {
             channel.close().awaitUninterruptibly();
         }
     }
+
+    public ReadHoldingRegistersResponse readHoldingRegisters(int startAddress, int quantityOfInputRegisters) throws ConnectionException, ErrorResponseException, NoResponseException {
+        return this.<ReadHoldingRegistersResponse>callModbusFunctionSync(new ReadHoldingRegistersRequest(startAddress, quantityOfInputRegisters));
+    }
+
+    public <V extends ModbusFunction> V callModbusFunctionSync(ModbusFunction function) throws ConnectionException, ErrorResponseException, NoResponseException {
+        //获取事务处理标识
+        int transactionId = callModbusFunction(function);
+        ModbusResponseHandler handler =(ModbusResponseHandler) channel.pipeline().get("responseHandler");
+        if (handler == null) {
+            throw new ConnectionException("Not connected!");
+        }
+
+        return (V)handler.getResponse(transactionId).getFunction();
+
+    }
+
+    /**
+     *
+     * @param function
+     * @return
+     * @throws ConnectionException
+     */
+    public int callModbusFunction(ModbusFunction function) throws ConnectionException {
+        if (channel == null) {
+            throw new ConnectionException("Not connected!");
+        }
+        int transactionId = calculateTransactionIdentifier();
+        //获取此功能码的pdu长度()
+        int pduLength = function.calculateLength();
+        ModbusHeader header = new ModbusHeader(transactionId, protocolIdentifier, pduLength, unitIdentifier);
+        ModbusFrame frame = new ModbusFrame(header, function);
+        channel.writeAndFlush(frame);
+        return transactionId;
+    }
+
+    /**
+     * 事务处理标识处理
+     * @return
+     */
+    public synchronized int calculateTransactionIdentifier() {
+        if (lastTransactionIdentifier < ModbusConstants.TRANSACTION_IDENTIFIER_MAX) {
+            lastTransactionIdentifier ++;
+        } else {
+            lastTransactionIdentifier = 1;
+        }
+        return lastTransactionIdentifier;
+    }
+
 
 
 }
