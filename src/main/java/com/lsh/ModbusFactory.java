@@ -1,5 +1,8 @@
 package com.lsh;
 
+import com.lsh.ip.IpParameters;
+import com.lsh.ip.tcp.TcpMaster;
+
 /**
  * @ClassName ModbusFactory
  * @Description: TODO
@@ -8,4 +11,10 @@ package com.lsh;
  * @Version
  */
 public class ModbusFactory {
+
+    public ModbusMaster createTcpMaster(IpParameters params) {
+        return new TcpMaster(params);
+    }
+
+
 }
