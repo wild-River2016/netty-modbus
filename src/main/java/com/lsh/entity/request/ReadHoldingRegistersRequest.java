@@ -38,4 +38,6 @@ public class ReadHoldingRegistersRequest extends AbstractFunction {
                 ", quantityOfInputRegisters=" + value +
                 '}';
     }
+
+
 }
