@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author ares
+ * @author ares++++++++++++++
  */
 public class ClientForTests {
 

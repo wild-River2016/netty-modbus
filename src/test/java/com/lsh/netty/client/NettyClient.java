@@ -49,30 +49,30 @@ public class NettyClient {
 
         }
 
-        private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
-            bootstrap.connect(host, port).addListener(new GenericFutureListener() {
-
-                @Override
-                public void operationComplete(Future future) throws Exception {
-                   if (future.isSuccess()) {
-                       System.out.println(new Date() + ": 连接成功……");
-                       Channel channel = ((ChannelFuture) future).channel();
-                   } else if (retry == 0) {
-                       System.err.println("重试次数已用完，放弃连接！");
-                   } else {
-                        //第几次重连
-                       int order = (MAX_RETRY - retry) + 1;
-                       //本次重连的间隔
-                       int delay = 1 << order;
-                       System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
-                       bootstrap.config().group().schedule(new Runnable() {
-                           @Override
-                           public void run() {
-                               connect(bootstrap, host, port, retry - 1);
-                           }
-                       }, delay, TimeUnit.SECONDS);
-                   }
-                }
-            });
-        }
+//        private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
+//            bootstrap.connect(host, port).addListener(new GenericFutureListener() {
+//
+//                @Override
+//                public void operationComplete(Future future) throws Exception {
+//                   if (future.isSuccess()) {
+//                       System.out.println(new Date() + ": 连接成功……");
+//                       Channel channel = ((ChannelFuture) future).channel();
+//                   } else if (retry == 0) {
+//                       System.err.println("重试次数已用完，放弃连接！");
+//                   } else {
+//                        //第几次重连
+//                       int order = (MAX_RETRY - retry) + 1;
+//                       //本次重连的间隔
+//                       int delay = 1 << order;
+//                       System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
+//                       bootstrap.config().group().schedule(new Runnable() {
+//                           @Override
+//                           public void run() {
+//                               connect(bootstrap, host, port, retry - 1);
+//                           }
+//                       }, delay, TimeUnit.SECONDS);
+//                   }
+//                }
+//            });
+//        }
 }

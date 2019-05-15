@@ -12,8 +12,8 @@ import com.lsh.ip.tcp.TcpMaster;
  */
 public class ModbusFactory {
 
-    public ModbusMaster createTcpMaster(IpParameters params) {
-        return new TcpMaster(params);
+    public ModbusMaster createTcpMaster(IpParameters params, boolean keepAlive) {
+        return new TcpMaster(params, keepAlive);
     }
 
 

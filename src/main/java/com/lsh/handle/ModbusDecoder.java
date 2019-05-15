@@ -4,12 +4,12 @@ import com.lsh.entity.ModbusFrame;
 import com.lsh.entity.ModbusFunction;
 import com.lsh.entity.ModbusHeader;
 import com.lsh.entity.func.ModbusError;
-import com.lsh.entity.response.ReadHoldingRegistersResponse;
+import com.lsh.msg.ModbusMessage;
+import com.lsh.msg.ReadHoldingRegistersResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.lsh.constant.ModbusConstants.MBAP_LENGTH;
@@ -38,21 +38,21 @@ public class ModbusDecoder extends ByteToMessageDecoder {
         //功能码
         short functionCode = in.readUnsignedByte();
 
-        ModbusFunction function = null;
+        ModbusMessage message = null;
         switch (functionCode) {
             case ModbusFunction.READ_HOLDING_REGISTERS:
-                function = new ReadHoldingRegistersResponse();
+                message = new ReadHoldingRegistersResponse();
         }
 
         if (ModbusFunction.isError(functionCode)) {
-            function = new ModbusError(functionCode);
-        } else if (function == null) {
-            function = new ModbusError(functionCode, (short)1);
+            message = new ModbusError(functionCode);
+        } else if (message == null) {
+            message = new ModbusError(functionCode, (short)1);
         }
 
-        function.decode(in.readBytes(in.readableBytes()));
+        message.decode(in.readBytes(in.readableBytes()));
 
-        ModbusFrame frame = new ModbusFrame(mbapHeader, function);
+        ModbusFrame frame = new ModbusFrame(mbapHeader, message);
 
         out.add(frame);
     }

@@ -3,6 +3,7 @@ package com.lsh;
 import com.lsh.entity.exception.ModbusInitException;
 import com.lsh.entity.exception.ModbusTransportException;
 import com.lsh.msg.ModbusRequest;
+import com.lsh.msg.ModbusResponse;
 
 /**
  * @ClassName ModbusMaster
@@ -17,10 +18,10 @@ abstract public class ModbusMaster extends Modbus{
 
     abstract public void init() throws ModbusInitException;
 
-    public final void send(ModbusRequest request) throws ModbusTransportException {
+    public final ModbusResponse send(ModbusRequest request) throws ModbusTransportException {
         request.validate(this);
-        sendImpl(request);
+        return sendImpl(request);
     }
 
-    abstract public void sendImpl(ModbusRequest request) throws ModbusTransportException;
+    abstract public ModbusResponse sendImpl(ModbusRequest request) throws ModbusTransportException;
 }

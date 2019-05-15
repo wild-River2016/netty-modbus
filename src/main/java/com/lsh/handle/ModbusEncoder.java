@@ -1,6 +1,7 @@
 package com.lsh.handle;
 
 import com.lsh.entity.ModbusFrame;
+import com.lsh.entity.ModbusFrame2;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;

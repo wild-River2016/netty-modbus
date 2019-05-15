@@ -7,5 +7,7 @@ package com.lsh.msg;
  * @Date 2019/4/21 19:38
  * @Version
  */
-public class ReadResponse {
+abstract public class ReadResponse  {
+
+
 }

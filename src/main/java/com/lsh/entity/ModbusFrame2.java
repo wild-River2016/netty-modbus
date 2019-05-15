@@ -1,6 +1,5 @@
 package com.lsh.entity;
 
-import com.lsh.msg.ModbusMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -8,31 +7,31 @@ import io.netty.buffer.Unpooled;
  * @ClassName ModbusFrame
  * @Description: modbus报文结构
  * @Author lsh
- * @Date 2019/4/22 10:28
+ * @Date 2019/4/9 20:51
  * @Version
  */
-public class ModbusFrame {
+public class ModbusFrame2 {
 
     private final ModbusHeader header;
-    private final ModbusMessage message;
+    private final ModbusFunction function;
 
-    public ModbusFrame(ModbusHeader header, ModbusMessage message) {
+    public ModbusFrame2(ModbusHeader header, ModbusFunction function) {
         this.header = header;
-        this.message = message;
+        this.function = function;
     }
 
     public ModbusHeader getHeader() {
         return header;
     }
 
-    public ModbusMessage getMessage() {
-        return message;
+    public ModbusFunction getFunction() {
+        return function;
     }
 
     public ByteBuf encode() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(header.encode());
-        buf.writeBytes(message.encode());
+        buf.writeBytes(function.encode());
         return buf;
     }
 
@@ -40,7 +39,7 @@ public class ModbusFrame {
     public String toString() {
         return "ModbusFrame{" +
                 "header=" + header +
-                ", message=" + message +
+                ", function=" + function +
                 '}';
     }
 }

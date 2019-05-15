@@ -2,6 +2,7 @@ package com.lsh.handle;
 
 import com.lsh.constant.ModbusConstants;
 import com.lsh.entity.ModbusFrame;
+import com.lsh.entity.ModbusFrame2;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;

@@ -1,6 +1,9 @@
 package com.lsh.entity.func;
 
+import com.lsh.Modbus;
 import com.lsh.entity.ModbusFunction;
+import com.lsh.entity.exception.ModbusTransportException;
+import com.lsh.msg.ModbusMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -8,12 +11,12 @@ import java.util.HashMap;
 
 /**
  * @ClassName ModbusError
- * @Description: TODO
+ * @Description: modbus异常信息
  * @Author lsh
  * @Date 2019/4/13 14:43
  * @Version
  */
-public class ModbusError extends ModbusFunction {
+public class ModbusError extends ModbusMessage {
 
     /*
      * Modbus Exception Codes
@@ -97,7 +100,7 @@ public class ModbusError extends ModbusFunction {
     /**
      * 存放异常功能码
      */
-    private static final HashMap<Short, String> ERRORS = new HashMap<>();
+    private static final HashMap<Short, String> ERRORS = new HashMap<Short, String>();
 
     static {
         ERRORS.put((short) (0x01), "ILLEGAL FUNCTION");
@@ -122,6 +125,11 @@ public class ModbusError extends ModbusFunction {
 
     public ModbusError(short functionCode) {
         super(functionCode);
+    }
+
+    @Override
+    public void validate(Modbus modbus) throws ModbusTransportException {
+        //TODO
     }
 
     public ModbusError(short functionCode, short exceptionCode) {
