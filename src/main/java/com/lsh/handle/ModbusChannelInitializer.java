@@ -20,7 +20,7 @@ public class ModbusChannelInitializer extends ChannelInitializer<SocketChannel> 
 
     private final SimpleChannelInboundHandler handler;
 
-    public ModbusChannelInitializer(SimpleChannelInboundHandler handler) {
+    public ModbusChannelInitializer(ModbusResponseHandler handler) {
         this.handler = handler;
     }
 
@@ -40,6 +40,7 @@ public class ModbusChannelInitializer extends ChannelInitializer<SocketChannel> 
      */
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
+        System.out.println("方法执行-------------------------------------------");
         ChannelPipeline pipeline = ch.pipeline();
         //数据包的最大长度、长度域的偏移量、长度域的长度
         pipeline.addLast("framer", new LengthFieldBasedFrameDecoder(ModbusConstants.ADU_MAX_LENGTH, 4, 2));

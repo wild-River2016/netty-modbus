@@ -42,9 +42,9 @@ public class ModbusReadHoldingRegistersTest {
 
     @Test
     public void testReadHoldingRegisters() throws NoResponseException, ErrorResponseException, ConnectionException {
-//        ReadHoldingRegistersResponse readHoldingRegisters = modbusClient.readHoldingRegisters(0, 10);
-//
-//        assertNotNull(readHoldingRegisters);
-//        System.out.println(readHoldingRegisters);
+        ReadHoldingRegistersResponse readHoldingRegisters = modbusClient.readHoldingRegisters(0, 10);
+
+        assertNotNull(readHoldingRegisters);
+        System.out.println(readHoldingRegisters);
     }
 }
